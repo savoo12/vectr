@@ -40,7 +40,7 @@ export const search = async (
     console.log("[v0] Raw search results with scores:", results.map(r => ({ 
       id: r.id, 
       score: r.score,
-      content: typeof r.content === 'string' ? r.content.substring(0, 100) : r.content
+      content: String(r.content || '').substring(0, 100)
     })));
     
     // Filter results by minimum score threshold to ensure relevance
