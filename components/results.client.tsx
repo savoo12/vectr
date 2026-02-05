@@ -101,7 +101,6 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
       >
         {"data" in state && state.data.length > 0 && (
           <Button
-            aria-label="Clear search results"
             className="shrink-0 rounded-full"
             disabled={isPending}
             onClick={reset}
@@ -110,6 +109,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
             variant="ghost"
           >
             <ArrowLeftIcon className="size-4" />
+            <span className="sr-only">Clear search results</span>
           </Button>
         )}
         <Input
@@ -121,8 +121,9 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
           required
         />
         {isPending ? (
-          <Button aria-label="Searching" className="shrink-0" disabled size="icon" variant="ghost">
+          <Button className="shrink-0" disabled size="icon" variant="ghost">
             <Loader2Icon className="size-4 animate-spin" />
+            <span className="sr-only">Searching</span>
           </Button>
         ) : (
           <UploadButton />
