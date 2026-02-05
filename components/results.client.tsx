@@ -30,8 +30,12 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
   const [state, formAction, isPending] = useActionState(search, { data: [] });
 
   useEffect(() => {
+    console.log("[v0] Search state changed:", state);
     if ("error" in state) {
+      console.log("[v0] Search error:", state.error);
       toast.error(state.error);
+    } else if ("data" in state) {
+      console.log("[v0] Search results count:", state.data?.length);
     }
   }, [state]);
 
