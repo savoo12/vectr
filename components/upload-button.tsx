@@ -230,6 +230,7 @@ export const UploadButton = () => {
         type="file"
       />
       <Button
+        aria-label="Upload images"
         className="shrink-0 rounded-full disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
         disabled={isUploading}
         onClick={() => inputRef.current?.click()}
