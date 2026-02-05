@@ -37,15 +37,22 @@ export const search = async (
       reranking: true,
     });
 
-    console.log("Results:", results);
+    console.log("[v0] Raw search results with scores:", results.map(r => ({ 
+      id: r.id, 
+      score: r.score,
+      content: r.content?.substring(0, 100) 
+    })));
     
-    // Filter results by minimum score threshold (0.3) to ensure relevance
-    const MINIMUM_SCORE_THRESHOLD = 0.3;
+    // Filter results by minimum score threshold to ensure relevance
+    // Using a low threshold (0.01) since Upstash scores can vary widely
+    const MINIMUM_SCORE_THRESHOLD = 0.01;
     const data = results
       .filter((result) => result.score >= MINIMUM_SCORE_THRESHOLD)
       .sort((a, b) => b.score - a.score)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
+    
+    console.log("[v0] Filtered results count:", data.length);
 
     console.log("Images found:", data);
     return { data };
