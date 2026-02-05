@@ -7,6 +7,7 @@ import {
   ImageIcon,
   ImageUpIcon,
   Loader2Icon,
+  SearchIcon,
   UploadIcon,
 } from "lucide-react";
 import { useActionState, useEffect } from "react";
@@ -121,12 +122,24 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
           required
         />
         {isPending ? (
-          <Button className="shrink-0" disabled size="icon" variant="ghost">
+          <Button className="shrink-0 rounded-full" disabled size="icon" variant="ghost">
             <Loader2Icon className="size-4 animate-spin" />
             <span className="sr-only">Searching</span>
           </Button>
         ) : (
-          <UploadButton />
+          <>
+            <Button
+              className="shrink-0 rounded-full"
+              disabled={!hasImages}
+              size="icon"
+              type="submit"
+              variant="ghost"
+            >
+              <SearchIcon className="size-4" />
+              <span className="sr-only">Search</span>
+            </Button>
+            <UploadButton />
+          </>
         )}
       </form>
     </>
