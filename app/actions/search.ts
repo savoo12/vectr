@@ -30,41 +30,14 @@ export const search = async (
   }
 
   try {
-    console.log("[v0] Searching index for query:", query);
-    const results = await index.search({ 
-      query,
-      limit: 50,
-      reranking: true,
-    });
+    console.log("Searching index for query:", query);
+    const results = await index.search({ query });
 
-    // Sort by score (highest first)
-    const sortedResults = results.sort((a, b) => b.score - a.score);
-    
-    // Log all results with their scores and content for debugging
-    console.log("[v0] Search results:");
-    sortedResults.forEach((r, i) => {
-      const contentPreview = typeof r.content === 'object' && r.content !== null && 'text' in r.content 
-        ? String((r.content as { text: string }).text).substring(0, 150)
-        : String(r.content || '').substring(0, 150);
-      console.log(`[v0] ${i + 1}. Score: ${r.score.toFixed(4)} | ID: ${r.id}`);
-      console.log(`[v0]    Content: ${contentPreview}...`);
-    });
-
-    // Use absolute minimum threshold - scores below 0.1 are likely not relevant
-    // Also use relative threshold - only include if within 60% of top score
-    const ABSOLUTE_MIN = 0.1;
-    const topScore = sortedResults[0]?.score ?? 0;
-    const relativeThreshold = topScore * 0.6;
-    const threshold = Math.max(ABSOLUTE_MIN, relativeThreshold);
-    
-    console.log(`[v0] Top score: ${topScore}, Relative threshold: ${relativeThreshold}, Final threshold: ${threshold}`);
-    
-    const data = sortedResults
-      .filter((result) => result.score >= threshold)
+    console.log("Results:", results);
+    const data = results
+      .sort((a, b) => b.score - a.score)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
-    
-    console.log("[v0] Filtered results count:", data.length);
 
     console.log("Images found:", data);
     return { data };
