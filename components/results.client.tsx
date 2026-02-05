@@ -109,6 +109,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
             variant="ghost"
           >
             <ArrowLeftIcon className="size-4" />
+            <span className="sr-only">Clear search results</span>
           </Button>
         )}
         <Input
@@ -122,6 +123,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
         {isPending ? (
           <Button className="shrink-0" disabled size="icon" variant="ghost">
             <Loader2Icon className="size-4 animate-spin" />
+            <span className="sr-only">Searching</span>
           </Button>
         ) : (
           <UploadButton />
