@@ -4,7 +4,10 @@ import { Search } from "@upstash/search";
 import type { PutBlobResult } from "@vercel/blob";
 import { FatalError, getStepMetadata, RetryableError } from "workflow";
 
-const upstash = Search.fromEnv();
+const upstash = new Search({
+  url: process.env.UPSTASH_SEARCH_URL!,
+  token: process.env.UPSTASH_SEARCH_TOKEN!,
+});
 
 export const indexImage = async (blob: PutBlobResult, text: string) => {
   "use step";
