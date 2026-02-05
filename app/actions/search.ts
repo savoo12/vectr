@@ -37,18 +37,23 @@ export const search = async (
       reranking: true,
     });
 
-    console.log("[v0] Raw search results with scores:", results.map(r => ({ 
+    // Sort by score first
+    const sortedResults = results.sort((a, b) => b.score - a.score);
+    
+    // Get the top score and filter results relative to it
+    // Only include results within 50% of the top score to ensure relevance
+    const topScore = sortedResults[0]?.score ?? 0;
+    const dynamicThreshold = topScore * 0.5;
+    
+    console.log("[v0] Top score:", topScore, "Dynamic threshold:", dynamicThreshold);
+    console.log("[v0] All results:", sortedResults.map(r => ({ 
       id: r.id, 
       score: r.score,
-      content: String(r.content || '').substring(0, 100)
+      included: r.score >= dynamicThreshold
     })));
     
-    // Filter results by minimum score threshold to ensure relevance
-    // Using a low threshold (0.01) since Upstash scores can vary widely
-    const MINIMUM_SCORE_THRESHOLD = 0.01;
-    const data = results
-      .filter((result) => result.score >= MINIMUM_SCORE_THRESHOLD)
-      .sort((a, b) => b.score - a.score)
+    const data = sortedResults
+      .filter((result) => result.score >= dynamicThreshold)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
     
