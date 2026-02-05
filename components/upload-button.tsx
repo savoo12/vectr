@@ -12,9 +12,6 @@ export const UploadButton = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const isDemo =
-    typeof window !== "undefined" &&
-    window.location.hostname.includes("vectr.store");
 
   const cancelUpload = () => {
     if (abortControllerRef.current) {
@@ -28,11 +25,6 @@ export const UploadButton = () => {
     const files = Array.from(event.target.files || []);
 
     if (files.length === 0) {
-      return;
-    }
-
-    if (isDemo) {
-      toast.error("Uploads are disabled in demo mode");
       return;
     }
 
@@ -239,13 +231,14 @@ export const UploadButton = () => {
       />
       <Button
         className="shrink-0 rounded-full disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-        disabled={isUploading || isDemo}
+        disabled={isUploading}
         onClick={() => inputRef.current?.click()}
         size="icon"
         type="button"
         variant="ghost"
       >
         <ImageUpIcon className="size-4" />
+        <span className="sr-only">Upload images</span>
       </Button>
     </>
   );

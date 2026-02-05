@@ -6,8 +6,8 @@ import { Search } from "@upstash/search";
 import type { PutBlobResult } from "@vercel/blob";
 
 const upstash = new Search({
-  url: process.env.UPSTASH_SEARCH_URL!,
-  token: process.env.UPSTASH_SEARCH_TOKEN!,
+  url: process.env.UPSTASH_SEARCH_REST_URL!,
+  token: process.env.UPSTASH_SEARCH_REST_TOKEN!,
 });
 const index = upstash.index("images");
 
