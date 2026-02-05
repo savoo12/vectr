@@ -1,6 +1,4 @@
 import { CheckCircle2Icon, ImageUpIcon } from "lucide-react";
-import { DeployButton } from "./deploy";
-import { Button } from "./ui/button";
 
 export const Header = () => (
   <div className="flex flex-col gap-8 sm:gap-12">
@@ -84,17 +82,5 @@ export const Header = () => (
         </p>
       </li>
     </ul>
-    <div className="flex gap-2">
-      <DeployButton />
-      <Button asChild size="sm" variant="outline">
-        <a
-          href="https://github.com/vercel/vectr"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Source code
-        </a>
-      </Button>
-    </div>
   </div>
 );
