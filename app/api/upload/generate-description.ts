@@ -23,7 +23,17 @@ export const generateDescription = async (blob: PutBlobResult) => {
 
     const { text } = await generateText({
       model: "xai/grok-2-vision",
-      system: "Describe the image in detail.",
+      system: `You are an image description expert. Describe the image in detail for a searchable image database.
+
+Include the following when relevant:
+- People: gender, approximate age, clothing (colors, types), accessories, hair, expressions
+- Objects: what they are, colors, sizes, brands if visible
+- Setting: indoor/outdoor, location type, time of day
+- Actions: what is happening, poses, activities
+- Colors: mention prominent colors explicitly
+- Text: any visible text or signs
+
+Be specific and use common search terms. For example, say "man in blue t-shirt" not just "person wearing clothes".`,
       messages: [
         {
           role: "user",
