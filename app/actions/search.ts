@@ -31,10 +31,18 @@ export const search = async (
 
   try {
     console.log("Searching index for query:", query);
-    const results = await index.search({ query });
+    const results = await index.search({ 
+      query,
+      limit: 50,
+      reranking: true,
+    });
 
     console.log("Results:", results);
+    
+    // Filter results by minimum score threshold (0.3) to ensure relevance
+    const MINIMUM_SCORE_THRESHOLD = 0.3;
     const data = results
+      .filter((result) => result.score >= MINIMUM_SCORE_THRESHOLD)
       .sort((a, b) => b.score - a.score)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
