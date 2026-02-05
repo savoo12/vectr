@@ -2,13 +2,14 @@
 
 "use server";
 
-import { Index } from "@upstash/vector";
+import { Search } from "@upstash/search";
 import type { PutBlobResult } from "@vercel/blob";
 
-const index = new Index({
-  url: process.env.UPSTASH_VECTOR_REST_URL!,
-  token: process.env.UPSTASH_VECTOR_REST_TOKEN!,
+const upstash = new Search({
+  url: process.env.UPSTASH_SEARCH_URL!,
+  token: process.env.UPSTASH_SEARCH_TOKEN!,
 });
+const index = upstash.index("images");
 
 type SearchResponse =
   | {
@@ -30,16 +31,11 @@ export const search = async (
 
   try {
     console.log("Searching index for query:", query);
-    // Upstash Vector with embedding model handles text-to-vector conversion
-    const results = await index.query({
-      data: query,
-      topK: 20,
-      includeMetadata: true,
-    });
+    const results = await index.search({ query });
 
     console.log("Results:", results);
     const data = results
-      .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+      .sort((a, b) => b.score - a.score)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
 

@@ -1,12 +1,12 @@
 /** biome-ignore-all lint/suspicious/noConsole: "Handy for debugging" */
 
-import { Index } from "@upstash/vector";
+import { Search } from "@upstash/search";
 import type { PutBlobResult } from "@vercel/blob";
 import { FatalError, getStepMetadata, RetryableError } from "workflow";
 
-const index = new Index({
-  url: process.env.UPSTASH_VECTOR_REST_URL!,
-  token: process.env.UPSTASH_VECTOR_REST_TOKEN!,
+const upstash = new Search({
+  url: process.env.UPSTASH_SEARCH_URL!,
+  token: process.env.UPSTASH_SEARCH_TOKEN!,
 });
 
 export const indexImage = async (blob: PutBlobResult, text: string) => {
@@ -20,11 +20,12 @@ export const indexImage = async (blob: PutBlobResult, text: string) => {
   );
 
   try {
-    // Store blob metadata in Upstash Vector along with the description
-    // The index will automatically generate embeddings from the text
+    const index = upstash.index("images");
+
+    // Store blob metadata in Upstash along with the description
     const result = await index.upsert({
       id: blob.pathname,
-      data: text,
+      content: { text },
       metadata: { ...blob },
     });
 
