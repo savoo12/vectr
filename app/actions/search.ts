@@ -30,30 +30,37 @@ export const search = async (
   }
 
   try {
-    console.log("Searching index for query:", query);
+    console.log("[v0] Searching index for query:", query);
     const results = await index.search({ 
       query,
       limit: 50,
       reranking: true,
     });
 
-    // Sort by score first
+    // Sort by score (highest first)
     const sortedResults = results.sort((a, b) => b.score - a.score);
     
-    // Get the top score and filter results relative to it
-    // Only include results within 50% of the top score to ensure relevance
+    // Log all results with their scores and content for debugging
+    console.log("[v0] Search results:");
+    sortedResults.forEach((r, i) => {
+      const contentPreview = typeof r.content === 'object' && r.content !== null && 'text' in r.content 
+        ? String((r.content as { text: string }).text).substring(0, 150)
+        : String(r.content || '').substring(0, 150);
+      console.log(`[v0] ${i + 1}. Score: ${r.score.toFixed(4)} | ID: ${r.id}`);
+      console.log(`[v0]    Content: ${contentPreview}...`);
+    });
+
+    // Use absolute minimum threshold - scores below 0.1 are likely not relevant
+    // Also use relative threshold - only include if within 60% of top score
+    const ABSOLUTE_MIN = 0.1;
     const topScore = sortedResults[0]?.score ?? 0;
-    const dynamicThreshold = topScore * 0.5;
+    const relativeThreshold = topScore * 0.6;
+    const threshold = Math.max(ABSOLUTE_MIN, relativeThreshold);
     
-    console.log("[v0] Top score:", topScore, "Dynamic threshold:", dynamicThreshold);
-    console.log("[v0] All results:", sortedResults.map(r => ({ 
-      id: r.id, 
-      score: r.score,
-      included: r.score >= dynamicThreshold
-    })));
+    console.log(`[v0] Top score: ${topScore}, Relative threshold: ${relativeThreshold}, Final threshold: ${threshold}`);
     
     const data = sortedResults
-      .filter((result) => result.score >= dynamicThreshold)
+      .filter((result) => result.score >= threshold)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
     
