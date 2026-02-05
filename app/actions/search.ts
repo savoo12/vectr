@@ -31,13 +31,9 @@ export const search = async (
 
   try {
     console.log("Searching index for query:", query);
-    const results = await index.search({
-      query,
-      limit: 20,
-      semanticWeight: 0.5,
-    });
+    const results = await index.search({ query });
 
-    console.log("Results:", JSON.stringify(results.map((r) => ({ id: r.id, score: r.score }))));
+    console.log("Results:", results);
     const data = results
       .sort((a, b) => b.score - a.score)
       .map((result) => result.metadata)
