@@ -38,9 +38,8 @@ export const search = async (
       semanticWeight: 0.5,
     });
 
-    console.log("Results:", results);
+    console.log("Results:", results.map((r) => ({ id: r.id, score: r.score })));
     const data = results
-      .filter((result) => result.score >= 0.5)
       .sort((a, b) => b.score - a.score)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
