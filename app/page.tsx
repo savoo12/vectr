@@ -5,8 +5,8 @@ import { Results } from "@/components/results";
 import { UploadedImagesProvider } from "@/components/uploaded-images-provider";
 
 export const metadata: Metadata = {
-  title: "vectr",
-  description: "vectr",
+  title: "Picsearch",
+  description: "Search your photos using natural language",
 };
 
 const ImagesSkeleton = () => (

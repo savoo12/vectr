@@ -6,19 +6,13 @@ export const DeployButton = () => {
   // Demo
   url.searchParams.set(
     "demo-description",
-    "A free, open-source template for building natural language image search on the AI Cloud."
+    "Search your photos using natural language. Just describe what you're looking for."
   );
-  url.searchParams.set("demo-image", "https://vectr.store/opengraph-image.png");
-  url.searchParams.set("demo-title", "vectr.store");
-  url.searchParams.set("demo-url", "https://vectr.store/");
+  url.searchParams.set("demo-title", "Picsearch");
 
   // Marketplace
   url.searchParams.set("from", "templates");
-  url.searchParams.set("project-name", "Vectr");
-
-  // Repository
-  url.searchParams.set("repository-name", "vectr");
-  url.searchParams.set("repository-url", "https://github.com/vercel/vectr");
+  url.searchParams.set("project-name", "Picsearch");
 
   // Integrations
   url.searchParams.set(

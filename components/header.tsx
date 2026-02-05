@@ -7,14 +7,13 @@ export const Header = () => (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <ImageUpIcon className="size-4" />
-        <h1 className="font-semibold tracking-tight">vectr.store</h1>
+        <h1 className="font-semibold tracking-tight">Picsearch</h1>
       </div>
       <p className="text-balance text-muted-foreground">
-        A free, open-source template for building natural language image search
-        on the AI Cloud.
+        Search your photos using natural language. Just describe what you're looking for.
       </p>
       <p className="text-muted-foreground text-sm italic">
-        Try searching for "water" or "desert".
+        Try searching for "dog" or "blue shirt".
       </p>
     </div>
     <ul className="flex flex-col gap-2 text-muted-foreground sm:gap-4">
