@@ -30,41 +30,38 @@ export const search = async (
   }
 
   try {
-    console.log("Searching index for query:", query);
-    const results = await index.search({
-      query,
-      limit: 20,
-      reranking: true,
-    });
+    console.log("[v0] Searching index for query:", query);
+
+    let results;
+    try {
+      results = await index.search({
+        query,
+        limit: 20,
+      });
+    } catch (searchError) {
+      console.log("[v0] Search call failed:", searchError);
+      return { error: "Search failed. Please try again." };
+    }
 
     console.log("[v0] Raw results count:", results.length);
     console.log(
       "[v0] Result scores:",
-      results.map((r) => ({ id: r.id, score: r.score }))
+      JSON.stringify(
+        results.map((r) => ({ id: r.id, score: r.score }))
+      )
     );
 
-    // Use a dynamic threshold: keep results that are at least 60% of the top score.
-    // This filters out results that are significantly less relevant than the best match.
-    // Also enforce a minimum absolute score to drop completely irrelevant results.
-    const MIN_ABSOLUTE_SCORE = 0.3;
-    const RELATIVE_THRESHOLD = 0.6;
-
+    // Sort by score descending -- Upstash already returns relevant results.
+    // Use a relative threshold: only keep results within 50% of the top score.
+    // This filters out loosely related results while keeping genuinely relevant ones.
     const sorted = results.sort((a, b) => b.score - a.score);
     const topScore = sorted.length > 0 ? sorted[0].score : 0;
-    const dynamicThreshold = Math.max(
-      MIN_ABSOLUTE_SCORE,
-      topScore * RELATIVE_THRESHOLD
-    );
+    const threshold = topScore * 0.5;
 
-    console.log(
-      "[v0] Top score:",
-      topScore,
-      "Dynamic threshold:",
-      dynamicThreshold
-    );
+    console.log("[v0] Top score:", topScore, "Threshold:", threshold);
 
     const data = sorted
-      .filter((result) => result.score >= dynamicThreshold)
+      .filter((result) => result.score >= threshold)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
 

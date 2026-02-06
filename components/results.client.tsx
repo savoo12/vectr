@@ -32,7 +32,11 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
 
   useEffect(() => {
     if (state && "error" in state) {
+      console.log("[v0] Search error state:", state.error);
       toast.error(state.error);
+    }
+    if (state && "data" in state) {
+      console.log("[v0] Search returned data count:", state.data.length);
     }
   }, [state]);
 
