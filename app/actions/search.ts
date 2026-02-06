@@ -14,6 +14,13 @@ const index = upstash.index("images");
 type SearchResponse =
   | {
       data: PutBlobResult[];
+      debug?: {
+        rawCount: number;
+        filteredCount: number;
+        topScore: number;
+        threshold: number;
+        scores: number[];
+      };
     }
   | {
       error: string;
@@ -67,7 +74,16 @@ export const search = async (
 
     console.log("[v0] Filtered results count:", data.length);
 
-    return { data };
+    return {
+      data,
+      debug: {
+        rawCount: results.length,
+        filteredCount: data.length,
+        topScore,
+        threshold,
+        scores: sorted.map((r) => r.score),
+      },
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
 
