@@ -1,3 +1,4 @@
+import { checkRateLimit } from "@vercel/firewall";
 import { NextResponse } from "next/server";
 import { FatalError } from "workflow";
 import { start } from "workflow/api";
@@ -5,6 +6,15 @@ import { processImage } from "./process-image";
 
 export const POST = async (request: Request): Promise<NextResponse> => {
   try {
+    // Rate limit uploads: configured in Vercel Firewall dashboard
+    const { rateLimited } = await checkRateLimit("upload-image", { request });
+    if (rateLimited) {
+      return NextResponse.json(
+        { error: "Too many uploads. Please wait a moment and try again." },
+        { status: 429 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 

@@ -3,7 +3,28 @@
 import { generateObject } from "ai";
 import { Search } from "@upstash/search";
 import type { PutBlobResult } from "@vercel/blob";
+import { headers } from "next/headers";
 import { z } from "zod";
+
+// Simple in-memory sliding window rate limiter for server actions.
+// Limits each IP to a max number of searches per time window.
+const SEARCH_RATE_LIMIT = 10; // max searches
+const SEARCH_WINDOW_MS = 60 * 1000; // per 60 seconds
+const searchRateMap = new Map<string, number[]>();
+
+function isSearchRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = searchRateMap.get(ip) || [];
+  // Remove expired timestamps
+  const recent = timestamps.filter((t) => now - t < SEARCH_WINDOW_MS);
+  if (recent.length >= SEARCH_RATE_LIMIT) {
+    searchRateMap.set(ip, recent);
+    return true;
+  }
+  recent.push(now);
+  searchRateMap.set(ip, recent);
+  return false;
+}
 
 const upstash = new Search({
   url: process.env.UPSTASH_SEARCH_REST_URL!,
@@ -96,6 +117,14 @@ export const search = async (
   _prevState: SearchResponse | undefined,
   formData: FormData
 ): Promise<SearchResponse> => {
+  const headersList = await headers();
+  const ip =
+    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+  if (isSearchRateLimited(ip)) {
+    return { error: "Too many searches. Please wait a moment and try again." };
+  }
+
   const query = formData.get("search");
 
   if (!query || typeof query !== "string") {
