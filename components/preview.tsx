@@ -11,8 +11,7 @@ export const Preview = ({ url, priority }: PreviewProps) => (
       alt={url}
       className="h-auto w-full rounded-md"
       height={630}
-      loading={priority ? "eager" : "lazy"}
-      priority={priority}
+      {...(priority ? { priority: true } : { loading: "lazy" })}
       sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
       src={url}
       width={630}
