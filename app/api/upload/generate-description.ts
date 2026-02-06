@@ -25,15 +25,25 @@ export const generateDescription = async (blob: PutBlobResult) => {
       model: "xai/grok-2-vision",
       system: `You are an image description expert. Describe the image in detail for a searchable image database.
 
-Include the following when relevant:
+Your response MUST have two sections:
+
+DESCRIPTION:
+Write a detailed description including:
 - People: gender, approximate age, clothing (colors, types), accessories, hair, expressions
+- Animals: species, breed if identifiable, color, size, what the animal is doing
 - Objects: what they are, colors, sizes, brands if visible
 - Setting: indoor/outdoor, location type, time of day
 - Actions: what is happening, poses, activities
 - Colors: mention prominent colors explicitly
 - Text: any visible text or signs
 
-Be specific and use common search terms. For example, say "man in blue t-shirt" not just "person wearing clothes".`,
+Be specific and use common search terms. For example, say "man in blue t-shirt" not just "person wearing clothes". Say "golden retriever dog" not just "pet".
+
+TAGS:
+List 5-15 single-word or short-phrase keyword tags that someone might search for to find this image. Focus on the PRIMARY subjects. For example:
+- A photo of a dog: dog, pet, pekingese, animal, fluffy, indoor
+- A selfie: selfie, woman, portrait, mirror, phone
+- A landscape: sunset, beach, ocean, sky, nature`,
       messages: [
         {
           role: "user",

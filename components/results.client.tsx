@@ -28,10 +28,10 @@ const PRIORITY_COUNT = 12;
 
 export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
   const { images } = useUploadedImages();
-  const [state, formAction, isPending] = useActionState(search, { data: [] });
+  const [state, formAction, isPending] = useActionState(search, undefined);
 
   useEffect(() => {
-    if ("error" in state) {
+    if (state && "error" in state) {
       toast.error(state.error);
     }
   }, [state]);
@@ -40,14 +40,45 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
     window.location.reload();
   };
 
-  const hasImages =
-    images.length ||
-    defaultData.length ||
-    ("data" in state && state.data?.length);
+  const searchPerformed = state !== undefined && "data" in state;
+  const searchHasResults = searchPerformed && state.data.length > 0;
+  const searchEmpty = searchPerformed && state.data.length === 0;
+  const searchErrored = state !== undefined && "error" in state;
+
+  const hasImages = images.length > 0 || defaultData.length > 0 || searchHasResults;
 
   return (
     <>
-      {hasImages ? (
+      {searchErrored ? (
+        <Empty className="h-full min-h-[50vh] rounded-lg border">
+          <EmptyHeader className="max-w-none">
+            <div className="relative isolate mb-8 flex">
+              <div className="rounded-full border bg-background p-3 shadow-xs">
+                <SearchIcon className="size-5 text-muted-foreground" />
+              </div>
+            </div>
+            <EmptyTitle>Search error</EmptyTitle>
+            <EmptyDescription>
+              {state && "error" in state ? state.error : "An unknown error occurred."}
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : searchEmpty ? (
+        <Empty className="h-full min-h-[50vh] rounded-lg border">
+          <EmptyHeader className="max-w-none">
+            <div className="relative isolate mb-8 flex">
+              <div className="rounded-full border bg-background p-3 shadow-xs">
+                <SearchIcon className="size-5 text-muted-foreground" />
+              </div>
+            </div>
+            <EmptyTitle>No matching images</EmptyTitle>
+            <EmptyDescription>
+              No images matched your search. Try a different description or
+              broader terms.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : hasImages ? (
         <div className="gap-4 sm:columns-2 md:columns-3 lg:columns-2 xl:columns-3">
           {images.map((image, index) => (
             <Preview
@@ -56,7 +87,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
               url={image.url}
             />
           ))}
-          {"data" in state && state.data?.length
+          {searchHasResults
             ? state.data.map((blob, index) => (
                 <Preview
                   key={blob.url}
@@ -100,7 +131,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
         action={formAction}
         className="-translate-x-1/2 fixed bottom-8 left-1/2 flex w-full max-w-sm items-center gap-1 rounded-full bg-background p-1 shadow-xl sm:max-w-lg lg:ml-[182px]"
       >
-        {"data" in state && state.data.length > 0 && (
+        {(searchPerformed || searchErrored) && (
           <Button
             className="shrink-0 rounded-full"
             disabled={isPending}
