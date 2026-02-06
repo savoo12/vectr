@@ -40,14 +40,33 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
     window.location.reload();
   };
 
+  const searchPerformed = "data" in state && state.data !== undefined;
+  const searchHasResults = searchPerformed && state.data.length > 0;
+  const searchEmpty = searchPerformed && state.data.length === 0;
+
   const hasImages =
     images.length ||
     defaultData.length ||
-    ("data" in state && state.data?.length);
+    searchHasResults;
 
   return (
     <>
-      {hasImages ? (
+      {searchEmpty ? (
+        <Empty className="h-full min-h-[50vh] rounded-lg border">
+          <EmptyHeader className="max-w-none">
+            <div className="relative isolate mb-8 flex">
+              <div className="rounded-full border bg-background p-3 shadow-xs">
+                <SearchIcon className="size-5 text-muted-foreground" />
+              </div>
+            </div>
+            <EmptyTitle>No matching images</EmptyTitle>
+            <EmptyDescription>
+              No images matched your search. Try a different description or
+              broader terms.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : hasImages ? (
         <div className="gap-4 sm:columns-2 md:columns-3 lg:columns-2 xl:columns-3">
           {images.map((image, index) => (
             <Preview
@@ -56,7 +75,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
               url={image.url}
             />
           ))}
-          {"data" in state && state.data?.length
+          {searchHasResults
             ? state.data.map((blob, index) => (
                 <Preview
                   key={blob.url}
