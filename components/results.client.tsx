@@ -28,10 +28,10 @@ const PRIORITY_COUNT = 12;
 
 export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
   const { images } = useUploadedImages();
-  const [state, formAction, isPending] = useActionState(search, { data: [] });
+  const [state, formAction, isPending] = useActionState(search, undefined);
 
   useEffect(() => {
-    if ("error" in state) {
+    if (state && "error" in state) {
       toast.error(state.error);
     }
   }, [state]);
@@ -40,7 +40,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
     window.location.reload();
   };
 
-  const searchPerformed = "data" in state && state.data !== undefined;
+  const searchPerformed = state !== undefined && "data" in state;
   const searchHasResults = searchPerformed && state.data.length > 0;
   const searchEmpty = searchPerformed && state.data.length === 0;
 
@@ -119,7 +119,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
         action={formAction}
         className="-translate-x-1/2 fixed bottom-8 left-1/2 flex w-full max-w-sm items-center gap-1 rounded-full bg-background p-1 shadow-xl sm:max-w-lg lg:ml-[182px]"
       >
-        {"data" in state && state.data.length > 0 && (
+        {state && "data" in state && state.data.length > 0 && (
           <Button
             className="shrink-0 rounded-full"
             disabled={isPending}
