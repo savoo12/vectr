@@ -34,17 +34,22 @@ export const search = async (
     const results = await index.search({
       query,
       limit: 20,
-      reranking: true,
     });
 
-    console.log("Results:", results);
+    console.log("[v0] Raw results count:", results.length);
+    console.log(
+      "[v0] Result scores:",
+      results.map((r) => ({ id: r.id, score: r.score }))
+    );
 
-    const SCORE_THRESHOLD = 0.4;
+    const SCORE_THRESHOLD = 0.01;
     const data = results
       .filter((result) => result.score >= SCORE_THRESHOLD)
       .sort((a, b) => b.score - a.score)
       .map((result) => result.metadata)
       .filter(Boolean) as unknown as PutBlobResult[];
+
+    console.log("[v0] Filtered results count:", data.length);
 
     console.log("Images found:", data);
     return { data };
