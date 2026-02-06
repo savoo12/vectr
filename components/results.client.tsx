@@ -32,14 +32,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
 
   useEffect(() => {
     if (state && "error" in state) {
-      console.log("[v0] Search error state:", state.error);
       toast.error(state.error);
-    }
-    if (state && "data" in state) {
-      console.log("[v0] Search returned data count:", state.data.length);
-      if (state.debug) {
-        console.log("[v0] Search debug:", JSON.stringify(state.debug));
-      }
     }
   }, [state]);
 
@@ -86,22 +79,10 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
               No images matched your search. Try a different description or
               broader terms.
             </EmptyDescription>
-            {searchPerformed && "data" in state && state.debug && (
-              <div className="mt-4 rounded-md bg-muted p-3 text-left text-xs text-muted-foreground">
-                <p>{"Debug: raw=" + state.debug.rawCount + " filtered=" + state.debug.filteredCount + " topScore=" + state.debug.topScore + " threshold=" + state.debug.threshold}</p>
-                <p>{"Scores: " + JSON.stringify(state.debug.scores)}</p>
-              </div>
-            )}
           </EmptyHeader>
         </Empty>
       ) : hasImages ? (
         <div className="gap-4 sm:columns-2 md:columns-3 lg:columns-2 xl:columns-3">
-          {searchPerformed && "data" in state && state.debug && (
-            <div className="mb-4 break-inside-avoid rounded-md bg-muted p-3 text-xs text-muted-foreground">
-              <p>{"Debug: raw=" + state.debug.rawCount + " filtered=" + state.debug.filteredCount + " topScore=" + state.debug.topScore.toFixed(3) + " threshold=" + state.debug.threshold.toFixed(3)}</p>
-              <p>{"Scores: " + state.debug.scores.map((s) => s.toFixed(3)).join(", ")}</p>
-            </div>
-          )}
           {images.map((image, index) => (
             <Preview
               key={image.url}
