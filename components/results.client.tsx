@@ -45,10 +45,7 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
   const searchEmpty = searchPerformed && state.data.length === 0;
   const searchErrored = state !== undefined && "error" in state;
 
-  const hasImages =
-    images.length ||
-    defaultData.length ||
-    searchHasResults;
+  const hasImages = images.length > 0 || defaultData.length > 0 || searchHasResults;
 
   return (
     <>
