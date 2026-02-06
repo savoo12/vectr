@@ -22,7 +22,29 @@ const mono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Picsearch",
-  description: "Search your photos using natural language",
+  description:
+    "Search your photos using natural language. Upload images and find them by describing what you see.",
+  openGraph: {
+    title: "Picsearch",
+    description:
+      "Search your photos using natural language. Upload images and find them by describing what you see.",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Picsearch - Search your photos using natural language",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Picsearch",
+    description:
+      "Search your photos using natural language. Upload images and find them by describing what you see.",
+    images: ["/og.jpg"],
+  },
 };
 
 type RootLayoutProps = {

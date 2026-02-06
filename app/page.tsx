@@ -1,13 +1,7 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Header } from "@/components/header";
 import { Results } from "@/components/results";
 import { UploadedImagesProvider } from "@/components/uploaded-images-provider";
-
-export const metadata: Metadata = {
-  title: "Picsearch",
-  description: "Search your photos using natural language",
-};
 
 const ImagesSkeleton = () => (
   <div className="columns-3 gap-4">
